@@ -10,61 +10,60 @@
 # Enjoy!
 
 # extract the list of submodules from .gitmodule
-cat .gitmodules |while read i
-do
-if [[ $i == \[submodule* ]]; then
-    echo converting $i
+cat .gitmodules | while read i; do
+    if [[ $i == \[submodule* ]]; then
+        echo converting "$i"
 
-	read i
+        read i
 
-    # extract the module's prefix
-    mpath=$(echo $i | grep -E "(\S+)$" -o)
+        # extract the module's prefix
+        mpath=$(echo "$i" | grep -E "(\S+)$" -o)
 
-	echo path: $mpath
+        echo path: "$mpath"
 
-    read i
+        read i
 
-    # extract the url of the submodule
-    murl=$(echo $i|cut -d\= -f2|xargs)
+        # extract the url of the submodule
+        murl=$(echo "$i" | cut -d\= -f2 | xargs)
 
-	echo url: $murl
+        echo url: "$murl"
 
-    # extract the module name
-    mname=$(basename $mpath)
+        # extract the module name
+        mname=$(basename "$mpath")
 
-	echo name: $mname
+        echo name: "$mname"
 
-	# extract the referenced commit
-	mcommit=$(git submodule status $mpath | grep -E "\S+" -o | head -1)
+        # extract the referenced commit
+        mcommit=$(git submodule status "$mpath" | grep -E "\S+" -o | head -1)
 
-	echo commit: $mcommit
+        echo commit: "$mcommit"
 
-    # deinit the module
-    git submodule deinit $mpath
+        # deinit the module
+        git submodule deinit "$mpath"
 
-    # remove the module from git
-    git rm -r --cached $mpath
+        # remove the module from git
+        git rm -r --cached "$mpath"
 
-    # remove the module from the filesystem
-    rm -rf $mpath
+        # remove the module from the filesystem
+        rm -rf "$mpath"
 
-    # commit the change
-    git commit -m "Removed $mpath submodule at commit $mcommit"
+        # commit the change
+        git commit -m "Removed $mpath submodule at commit $mcommit"
 
-    # add the remote
-    git remote add -f $mname $murl
+        # add the remote
+        git remote add -f "$mname" "$murl"
 
-    # add the subtree
-    git subtree add --prefix $mpath $mcommit --squash
+        # add the subtree
+        git subtree add --prefix "$mpath" "$mcommit" --squash
 
-	# commit any left over uncommited changes
-	git commit -a -m "$mname cleaned up"
+        # commit any left over uncommited changes
+        git commit -a -m "$mname cleaned up"
 
-    # fetch the files
-    git fetch $murl master
+        # fetch the files
+        git fetch "$murl" master
 
-	echo
-fi
+        echo
+    fi
 done
 git rm .gitmodules
 git commit -a -m "Removed .gitmodules"
