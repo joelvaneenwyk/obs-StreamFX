@@ -10,71 +10,72 @@
 # Enjoy!
 
 function convert_submodule_to_subtree() {
-  # extract the list of submodules from .gitmodule
-  cat .gitmodules | while read i; do
-    if [[ $i == \[submodule* ]]; then
-      echo converting "$i"
+    # extract the list of submodules from .gitmodule
+    while IFS= read -r i; do
+        if [[ $i == \[submodule* ]]; then
+            echo converting "$i"
+            read -r i
 
-      read i
+            # extract the module's prefix
+            mpath=$(echo "$i" | grep -E "(\S+)$" -o)
 
-      # extract the module's prefix
-      mpath=$(echo "$i" | grep -E "(\S+)$" -o)
+            echo path: "$mpath"
+            read -r i
 
-      echo path: "$mpath"
+            # extract the url of the submodule
+            murl=$(echo "$i" | cut -d= -f2 | xargs)
+            echo url: "$murl"
 
-      read i
+            # extract the module name
+            mname=$(basename "$mpath")
+            echo name: "$mname"
 
-      # extract the url of the submodule
-      murl=$(echo "$i" | cut -d\= -f2 | xargs)
+            # extract the referenced commit
+            mcommit=$(git submodule status "$mpath" | grep -E "\S+" -o | head -1)
+            echo commit: "$mcommit"
 
-      echo url: "$murl"
+            # deinit the module
+            git submodule deinit "$mpath"
 
-      # extract the module name
-      mname=$(basename "$mpath")
+            # remove the module from git
+            git rm -r --cached "$mpath"
 
-      echo name: "$mname"
+            # remove the module from the filesystem
+            rm -rf "$mpath"
 
-      # extract the referenced commit
-      mcommit=$(git submodule status "$mpath" | grep -E "\S+" -o | head -1)
+            # commit the change
+            git commit -m "Removed $mpath submodule at commit $mcommit"
 
-      echo commit: "$mcommit"
+            # add the remote
+            git remote add -f "$mname" "$murl"
 
-      # deinit the module
-      git submodule deinit "$mpath"
+            # add the subtree
+            git subtree add --prefix "$mpath" "$mcommit" --squash
 
-      # remove the module from git
-      git rm -r --cached "$mpath"
+            # commit any left over uncommited changes
+            git commit -a -m "$mname cleaned up"
 
-      # remove the module from the filesystem
-      rm -rf "$mpath"
+            # fetch the files
+            git fetch "$murl" master
 
-      # commit the change
-      git commit -m "Removed $mpath submodule at commit $mcommit"
-
-      # add the remote
-      git remote add -f "$mname" "$murl"
-
-      # add the subtree
-      git subtree add --prefix "$mpath" "$mcommit" --squash
-
-      # commit any left over uncommited changes
-      git commit -a -m "$mname cleaned up"
-
-      # fetch the files
-      git fetch "$murl" master
-
-      echo
-    fi
-  done
-  git rm .gitmodules
-  git commit -a -m "Removed .gitmodules"
+            echo
+        fi
+    done <.gitmodules
+    git rm .gitmodules
+    git commit -a -m "Removed .gitmodules"
 }
 
 function build() {
-  git submodule update --init --recursive
-  export CHECKOUT_DIR="$(pwd)/third-party/obs-studio"
-  export GIT_TAG="test"
-  source ./third-party/obs-studio/CI/build-linux.sh
+    git submodule update --init --recursive
+
+    CHECKOUT_DIR="$(pwd)/third-party/obs-studio"
+    export CHECKOUT_DIR
+
+    GIT_TAG="test"
+    export GIT_TAG
+
+    # shellcheck source=/dev/null
+    source ./third-party/obs-studio/CI/build-linux.sh
 }
 
 build
