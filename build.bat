@@ -1,17 +1,27 @@
 @echo off
 setlocal
 
-git subtree add --prefix third-party/obs-studio https://github.com/joelvaneenwyk/obs-studio.git main --squash
-git subtree add --prefix third-party/obs-studio/plugins/win-dshow/libdshowcapture https://github.com/obsproject/libdshowcapture.git
-git subtree add --prefix third-party/obs-studio/plugins/mac-syphon/syphon-framework https://github.com/palana/Syphon-Framework.git
-git subtree add --prefix third-party/obs-studio/plugins/enc-amf https://github.com/obsproject/obs-amd-encoder.git
-git subtree add --prefix third-party/obs-studio/plugins/obs-browser https://github.com/obsproject/obs-browser.git
-git subtree add --prefix third-party/obs-studio/plugins/obs-outputs/ftl-sdk https://github.com/Mixer/ftl-sdk.git
-git subtree add --prefix third-party/obs-studio/plugins/obs-websocket https://github.com/obsproject/obs-websocket.git
-exit /b
-
 git submodule update --init --recursive
 pwsh -NoProfile -File "%~dp0third-party\obs-studio\CI\build-windows.ps1"
+exit /b
+
+:DeleteFolder
+setlocal EnableDelayedExpansion
+    if exist "%~1" (
+		rmdir /q /s "%~1"
+		echo Removed folder: "%~1"
+	)
+exit /b 0
+
+git subtree add --prefix third-party/obs-studio https://github.com/joelvaneenwyk/obs-studio.git main --squash
+git subtree add --prefix third-party/obs-studio/plugins/win-dshow/libdshowcapture https://github.com/obsproject/libdshowcapture.git master --squash
+git subtree add --prefix third-party/obs-studio/plugins/mac-syphon/syphon-framework https://github.com/palana/Syphon-Framework.git master --squash
+git subtree add --prefix third-party/obs-studio/plugins/enc-amf https://github.com/obsproject/obs-amd-encoder.git master --squash
+git subtree add --prefix third-party/obs-studio/plugins/obs-browser https://github.com/obsproject/obs-browser.git master --squash
+git subtree add --prefix third-party/obs-studio/plugins/obs-outputs/ftl-sdk https://github.com/Mixer/ftl-sdk.git master --squash
+git subtree add --prefix third-party/obs-studio/plugins/obs-websocket https://github.com/obsproject/obs-websocket.git master --squash
+exit /b
+
 exit /b
 
 rmdir /q /s "%~dp0third-party/obs-studio/plugins/win-dshow/libdshowcapture"
