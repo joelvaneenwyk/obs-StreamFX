@@ -29,7 +29,7 @@ set -eE
 _RUN_OBS_BUILD_SCRIPT=TRUE
 PRODUCT_NAME="OBS-Studio"
 
-CHECKOUT_DIR="$(git rev-parse --show-toplevel)"
+CHECKOUT_DIR="${CHECKOUT_DIR:-$(git rev-parse --show-toplevel)}"
 DEPS_BUILD_DIR="${CHECKOUT_DIR}/../obs-build-dependencies"
 source "${CHECKOUT_DIR}/CI/include/build_support.sh"
 source "${CHECKOUT_DIR}/CI/include/build_support_linux.sh"
@@ -47,29 +47,56 @@ source "${CHECKOUT_DIR}/CI/linux/03_package_obs.sh"
 print_usage() {
     echo "build-linux.sh - Build script for OBS-Studio\n"
     echo -e "Usage: ${0}\n" \
-            "-h, --help                     : Print this help\n" \
-            "-q, --quiet                    : Suppress most build process output\n" \
-            "-v, --verbose                  : Enable more verbose build process output\n" \
-            "-d, --skip-dependency-checks   : Skip dependency checks (default: off)\n" \
-            "-p, --portable                 : Create portable build (default: off)\n" \
-            "-pkg, --package                : Create distributable disk image (default: off)\n" \
-            "--disable-pipewire             : Disable building with PipeWire support (default: off)\n" \
-            "--build-dir                    : Specify alternative build directory (default: build)\n"
+        "-h, --help                     : Print this help\n" \
+        "-q, --quiet                    : Suppress most build process output\n" \
+        "-v, --verbose                  : Enable more verbose build process output\n" \
+        "-d, --skip-dependency-checks   : Skip dependency checks (default: off)\n" \
+        "-p, --portable                 : Create portable build (default: off)\n" \
+        "-pkg, --package                : Create distributable disk image (default: off)\n" \
+        "--disable-pipewire             : Disable building with PipeWire support (default: off)\n" \
+        "--build-dir                    : Specify alternative build directory (default: build)\n"
 }
 
 obs-build-main() {
     while true; do
         case "${1}" in
-            -h | --help ) print_usage; exit 0 ;;
-            -q | --quiet ) export QUIET=TRUE; shift ;;
-            -v | --verbose ) export VERBOSE=TRUE; shift ;;
-            -d | --skip-dependency-checks ) SKIP_DEP_CHECKS=TRUE; shift ;;
-            -p | --portable ) PORTABLE=TRUE; shift ;;
-            -pkg | --package ) PACKAGE=TRUE; shift ;;
-            --disable-pipewire ) DISABLE_PIPEWIRE=TRUE; shift ;;
-            --build-dir ) BUILD_DIR="${2}"; shift 2 ;;
-            -- ) shift; break ;;
-            * ) break ;;
+        -h | --help)
+            print_usage
+            exit 0
+            ;;
+        -q | --quiet)
+            export QUIET=TRUE
+            shift
+            ;;
+        -v | --verbose)
+            export VERBOSE=TRUE
+            shift
+            ;;
+        -d | --skip-dependency-checks)
+            SKIP_DEP_CHECKS=TRUE
+            shift
+            ;;
+        -p | --portable)
+            PORTABLE=TRUE
+            shift
+            ;;
+        -pkg | --package)
+            PACKAGE=TRUE
+            shift
+            ;;
+        --disable-pipewire)
+            DISABLE_PIPEWIRE=TRUE
+            shift
+            ;;
+        --build-dir)
+            BUILD_DIR="${2}"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *) break ;;
         esac
     done
 
@@ -79,7 +106,7 @@ obs-build-main() {
 
     GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     GIT_HASH=$(git rev-parse --short HEAD)
-    GIT_TAG=$(git describe --tags --abbrev=0)
+    GIT_TAG="${GIT_TAG:-$(git describe --tags --abbrev=0)}"
 
     if [ "${BUILD_FOR_DISTRIBUTION}" ]; then
         VERSION_STRING="${GIT_TAG}"
