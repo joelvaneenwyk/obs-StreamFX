@@ -1,6 +1,18 @@
 @echo off
 setlocal
 
+git submodule update --init --recursive
+pwsh -NoProfile -File "%~dp0third-party\obs-studio\CI\build-windows.ps1"
+exit /b
+
+:DeleteFolder
+setlocal EnableDelayedExpansion
+    if exist "%~1" (
+		rmdir /q /s "%~1"
+		echo Removed folder: "%~1"
+	)
+exit /b 0
+
 git subtree add --prefix third-party/obs-studio https://github.com/joelvaneenwyk/obs-studio.git main --squash
 git subtree add --prefix third-party/obs-studio/plugins/win-dshow/libdshowcapture https://github.com/obsproject/libdshowcapture.git master --squash
 git subtree add --prefix third-party/obs-studio/plugins/mac-syphon/syphon-framework https://github.com/palana/Syphon-Framework.git master --squash
@@ -10,8 +22,6 @@ git subtree add --prefix third-party/obs-studio/plugins/obs-outputs/ftl-sdk http
 git subtree add --prefix third-party/obs-studio/plugins/obs-websocket https://github.com/obsproject/obs-websocket.git master --squash
 exit /b
 
-git submodule update --init --recursive
-pwsh -NoProfile -File "%~dp0third-party\obs-studio\CI\build-windows.ps1"
 exit /b
 
 rmdir /q /s "%~dp0third-party/obs-studio/plugins/win-dshow/libdshowcapture"
