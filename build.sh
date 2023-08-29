@@ -9,6 +9,15 @@
 # Run `~/subtrees.sh`
 # Enjoy!
 
+function add_submodules() {
+    git submodule add "https://github.com/Xaymar/cmake-clang.git" ./cmake/clang
+    git submodule add "https://github.com/Xaymar/cmake-version.git" ./cmake/version
+    git submodule add "https://github.com/nlohmann/json.git" ./third-party/nlohmann-json
+    git submodule add "https://github.com/Xaymar/msvc-redist-helper.git" ./third-party/msvc-redist-helper
+    git submodule add "https://github.com/NVIDIA/MAXINE-AR-SDK.git" ./third-party/nvidia-maxine-ar-sdk
+    git submodule add "https://github.com/NVIDIA/MAXINE-VFX-SDK.git" ./third-party/nvidia-maxine-vfx-sdk
+}
+
 function convert_submodule_to_subtree() {
     # extract the list of submodules from .gitmodule
     while IFS= read -r i; do
