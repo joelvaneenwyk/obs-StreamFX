@@ -17,6 +17,7 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[*.sh]
+[*.{sh,bash,zsh}]
 indent_style = space
-indent_size = 2
+indent_size = 4
+line_ending = lf
