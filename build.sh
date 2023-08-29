@@ -83,6 +83,9 @@ function build() {
     GIT_TAG="test"
     export GIT_TAG
 
+    DISABLE_PIPEWIRE=1
+    export DISABLE_PIPEWIRE
+
     # shellcheck source=/dev/null
     source ./third-party/obs-studio/CI/build-linux.sh
 }
