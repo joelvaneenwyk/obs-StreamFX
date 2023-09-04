@@ -75,9 +75,11 @@ function convert_submodule_to_subtree() {
 }
 
 function build() {
-    git submodule update --init --recursive
+    local source_root
+    source_root="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" &>/dev/null && cd ../../../ && pwd)"
+    pushd "${source_root}/" >/dev/null || return 7
 
-    CHECKOUT_DIR="$(pwd)/third-party/obs-studio"
+    CHECKOUT_DIR="${source_root}"
     export CHECKOUT_DIR
 
     GIT_TAG="test"
@@ -86,8 +88,12 @@ function build() {
     DISABLE_PIPEWIRE=1
     export DISABLE_PIPEWIRE
 
+    git submodule update --init --recursive
+
     # shellcheck source=/dev/null
-    source ./third-party/obs-studio/CI/build-linux.sh
+    source "${CHECKOUT_DIR}/CI/build-linux.sh"
+
+    popd >/dev/null || return 8
 }
 
 build
