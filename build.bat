@@ -1,10 +1,12 @@
 @echo off
 setlocal
 
+call :Command git pull --rebase
 call :Command git submodule update --init --recursive
+call :Command git -c trace2.eventTarget=1 pull --recurse-submodules=true
 call :RunSubtreeCommand pull
 
-call :Command pwsh -NoProfile -File "%~dp0third-party\obs-studio\CI\build-windows.ps1"
+call :Command pwsh -NoProfile -File "%~dp0third-party\obs-studio\CI\windows\01_install_dependencies.ps1"
 exit /b
 
 :DeleteFolder
