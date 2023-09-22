@@ -10,8 +10,16 @@ root = true
 insert_final_newline = true
 trim_trailing_whitespace = true
 charset = utf-8
+indent_style = space
+indent_size = 4
+
+[*.{txt,md,cpp,c,h}]
 indent_style = tab
 indent_size = 8
+
+[*.{json}]
+indent_style = space
+indent_size = 4
 
 # As per notr1ch, for 3rd party code that's a part of obs-outputs.
 [plugins/obs-outputs/librtmp/*.{cpp,c,h}]
@@ -30,6 +38,11 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 
-[plugins/rtmp-services/data/**/*.json]
+[*.{sh,bash,zsh}]
 indent_style = space
 indent_size = 4
+line_ending = lf
+
+[.github/**/*.yaml]
+indent_style = space
+indent_size = 2
