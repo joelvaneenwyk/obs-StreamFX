@@ -1,4 +1,14 @@
 {
+	"cmake.buildArgs": [
+		"-DENABLE_PIPEWIRE=OFF"
+	],
+	"cmake.configureSettings": {
+		"ENABLE_PIPEWIRE": "OFF"
+	},
+	"cmake.buildToolArgs": [
+		"-DENABLE_PIPEWIRE=OFF"
+	],
+	"cmake.cacheInit": null,
     "cmake.options.statusBarVisibility": "visible",
     "cmake.languageSupport.enableFileAPI": true,
     "cmake.allowCommentsInPresetsFile": true,

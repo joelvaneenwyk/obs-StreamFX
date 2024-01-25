@@ -16,9 +16,8 @@ concurrency:
 jobs:
   validate:
     name: "Pull Request Validation"
-    strategy:
-      fail-fast: true
     runs-on: "ubuntu-22.04"
+
     steps:
     - name: "Clone"
       uses: actions/checkout@v3
