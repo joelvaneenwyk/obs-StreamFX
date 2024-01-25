@@ -20,6 +20,3 @@
 [submodule "third-party/nvidia-maxine-vfx-sdk"]
 	path = third-party/nvidia-maxine-vfx-sdk
 	url = https://github.com/NVIDIA/MAXINE-VFX-SDK.git
-[submodule "third-party/obs-studio"]
-	path = third-party/obs-studio
-	url = git@github.com:joelvaneenwyk/obs-studio.git
