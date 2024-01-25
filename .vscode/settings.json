@@ -1,0 +1,14 @@
+{
+    "cmake.options.statusBarVisibility": "visible",
+    "cmake.languageSupport.enableFileAPI": true,
+    "cmake.allowCommentsInPresetsFile": true,
+    "cmake.allowUnsupportedPresetsVersions": true,
+    "cmake.configureOnOpen": true,
+    "cmake.setBuildTypeOnMultiConfig": true,
+    "cmake.format.spaceInParentheses": true,
+    "cmake.format.spaceAfterCommandName": true,
+    "cmake.buildTask": true,
+    "cmake.ctest.allowParallelJobs": true,
+    "cmake.installPrefix": "bin",
+    "cmake.loggingLevel": "debug"
+}
