@@ -7,7 +7,7 @@ name: Validate Pull Request
 on:
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 concurrency:
   group: validate-${{ github.ref_name }}
@@ -16,20 +16,18 @@ concurrency:
 jobs:
   validate:
     name: "Pull Request Validation"
-    strategy:
-      fail-fast: true
     runs-on: "ubuntu-22.04"
     steps:
-    - name: "Clone"
-      uses: actions/checkout@v3
-      with:
-        submodules: false
-        fetch-depth: 0
+      - name: "Clone"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
 
-    - name: "Copyright Headers"
-      shell: bash
-      run: |
-        node "tools/copyright.js" .
-        git --no-pager diff --patch --minimal HEAD --
-        git update-index --refresh
-        git diff-index --quiet HEAD --
+      - name: "Copyright Headers"
+        shell: bash
+        run: |
+          node "tools/copyright.js" .
+          git --no-pager diff --patch --minimal HEAD --
+          git update-index --refresh
+          git diff-index --quiet HEAD --
