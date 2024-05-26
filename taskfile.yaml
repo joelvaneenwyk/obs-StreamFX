@@ -1,0 +1,70 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  SLASH: '{{fromSlash "/"}}'
+
+output:
+  group:
+    begin: "::group::{{.TASK}}"
+    end: "::endgroup::"
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  _detach:
+    requires:
+      vars: [TARGET, GIT_PREFIX]
+    vars:
+      GIT: git -C {{.TARGET}}
+    preconditions:
+      - test -f "{{.TARGET}}{{.SLASH}}buildspec.json"
+    cmds:
+      - cmd: "{{.GIT}} reset -- .gitmodules"
+        ignore_error: true
+      - cmd: "{{.GIT}} submodule deinit {{.GIT_PREFIX}}"
+        ignore_error: true
+      - cmd: '{{.GIT}} config -f .gitmodules --remove-section "submodule.{{.GIT_PREFIX}}"'
+        ignore_error: true
+      - cmd: "{{.GIT}} submodule update --init --recursive"
+        ignore_error: true
+      - cmd: "{{.GIT}} rm --cached --force {{.GIT_PREFIX}}"
+        ignore_error: true
+
+  # https://github.com/Xaymar/obs-StreamFX/blob/root/BUILDING.md
+  detach:
+    vars:
+      TARGET: "{{.CLI_ARGS}}"
+      GIT_PREFIX: "build-aux/config"
+    env:
+      TARGET_TEST: "{{.TARGET}}/buildspec.json"
+    preconditions:
+      - test -f "$TARGET_TEST"
+    cmds:
+      - task: _detach
+        vars:
+          TARGET: "{{ .TARGET }}"
+          GIT_PREFIX: "{{ .GIT_PREFIX }}"
+
+  # https://github.com/Xaymar/obs-StreamFX/blob/root/BUILDING.md
+  attach:
+    vars:
+      TARGET: "{{.CLI_ARGS}}"
+      BRANCH: develop
+      GIT_URL: https://github.com/joelvaneenwyk/obs-studio-config.git
+      GIT_PREFIX: build-aux/config
+    preconditions:
+      - test -d {{.TARGET}}
+    generates:
+      - "{{.TARGET}}/build-aux/config"
+    cmds:
+      - task: _detach
+        vars:
+          TARGET: "{{ .TARGET }}"
+          GIT_PREFIX: "{{ .GIT_PREFIX }}"
+      - cmd: git -C {{.TARGET}} submodule add --branch develop -- {{.GIT_URL}} {{.GIT_PREFIX}}
+        ignore_error: true

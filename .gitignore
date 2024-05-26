@@ -11,5 +11,7 @@
 /deps64
 
 # Visual Studio
-/.vs
-/#Build
+/.vs/
+/#Build/
+
+/.build/
