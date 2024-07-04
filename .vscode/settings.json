@@ -1,3 +1,6 @@
 {
-	"asciidoc.antora.enableAntoraSupport": true
+	"asciidoc.antora.enableAntoraSupport": true,
+	"mesonbuild.configureOnOpen": true,
+	"C_Cpp.default.compileCommands": "third-party/nlohmann-json/builddir/compile_commands.json",
+	"C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }
