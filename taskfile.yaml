@@ -75,7 +75,7 @@ tasks:
       - task: dependency-prebuilt
         vars: { OBS_DEPS_URL: { ref: '.OBS_DEPS_URL' } }
       - task: dependency-obs-libraries-apply-patches
-      #- task: dependency-obs-libraries
+      - task: dependency-obs-libraries
       #- task: dependency-configure
       #- task: build-debug
       #- task: build-release
@@ -115,13 +115,15 @@ tasks:
       # obs-studio does not support ClangCL
       CMAKE_GENERATOR_TOOLSET: ""
     cmds:
+      - cmd: |
+          {{.RUN}} {{.MKDIR}} "{{fromSlash .TEMP_DIR}}" || true
       - cmd: >-
           cmake
-          -S "{{ joinPath .ROOT_DIR "third-party/obs-studio" }}"
+          -S "{{ joinPath .ROOT_DIR "third-party" "obs-studio" }}"
           -B "{{ joinPath .BUILD "obs" }}"
           -DCMAKE_SYSTEM_VERSION="{{ .CMAKE_SYSTEM_VERSION }}"
-          -DCMAKE_INSTALL_PREFIX="{{ joinPath .ROOT_DIR "build/obs/install" }}""
-          -DCMAKE_PREFIX_PATH="{{ joinPath .ROOT_DIR "build/obsdeps }};{{ joinPath .ROOT_DIR "build/qt" }}"
+          -DCMAKE_INSTALL_PREFIX="{{ joinPath .ROOT_DIR "build/obs/install" }}"
+          -DCMAKE_PREFIX_PATH="{{ joinPath .ROOT_DIR "build/obsdeps" }};{{ joinPath .ROOT_DIR "build/qt" }}"
           -DENABLE_PLUGINS=OFF
           -DENABLE_UI=OFF
           -DENABLE_SCRIPTING=OFF
@@ -140,15 +142,15 @@ tasks:
 
   configure:
     cmds:
-      - cmd: |
+      - cmd: >-
           cmake \
-          -S "{{ .ROOT_DIR }}" \
-          -B "{{ joinPath .BUILD "ci" | fromSlash }}" \
-          -DCMAKE_SYSTEM_VERSION="{{ .CMAKE_SYSTEM_VERSION }}" \
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
-          -Dlibobs_DIR="{{ joinPath .ROOT_DIR "build/obs/install" }}" \
-          -DQt${{ matrix.qt }}_DIR={{ joinPath .BUILD "qt" | fromSlash }} \
-          -DFFmpeg_DIR={{ joinPath .BUILD "obsdeps" | fromSlash }} \
+          -S "{{ .ROOT_DIR }}"
+          -B "{{ joinPath .BUILD "ci" | fromSlash }}"
+          -DCMAKE_SYSTEM_VERSION="{{ .CMAKE_SYSTEM_VERSION }}"
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
+          -Dlibobs_DIR="{{ joinPath .ROOT_DIR "build/obs/install" }}"
+          -DQt${{ matrix.qt }}_DIR={{ joinPath .BUILD "qt" | fromSlash }}
+          -DFFmpeg_DIR={{ joinPath .BUILD "obsdeps" | fromSlash }}
           -DCURL_DIR={{ joinPath .BUILD "obsdeps" | fromSlash }}
 
   build-debug:
