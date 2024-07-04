@@ -1,4 +1,7 @@
 # Custom Dictionary Words
+binutils
+buildspecdata
+checkinstall
 clangd
 DCMAKE
 DCURL
@@ -18,14 +21,21 @@ libavfilter
 libavformat
 libavutil
 libcmocka
+libcurl
+libdrm
 libegl
 libfdk
+libfontconfig
+libfreetype
 libgl
 libgles
 libglvnd
+libjack
 libjansson
 libluajit
 libmbedtls
+libobs
+libpulse
 libqt
 libsndio
 libspeexdsp
@@ -34,12 +44,15 @@ libswscale
 libudev
 libv
 libva
+libvlc
+libwayland
 libx
 libxcb
 libxcomposite
 libxinerama
 libxss
 lldb
+Makefiles
 MSVC
 obsdeps
 popd

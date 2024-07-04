@@ -49,6 +49,15 @@ jobs:
       CMAKE_GENERATOR_TOOLSET: "${{ matrix.CMAKE_GENERATOR_TOOLSET }}"
       CMAKE_SYSTEM_VERSION: "${{ matrix.CMAKE_SYSTEM_VERSION }}"
 
+    outputs:
+      obs_deps_version: ${{ steps.info.outputs.obs_deps_version }}
+      obs_deps_hash: ${{ steps.info.outputs.obs_deps_hash }}
+      obs_deps_url: ${{ steps.info.outputs.obs_deps_url }}
+      qt_version: ${{ steps.info.outputs.qt_version }}
+      qt_hash: ${{ steps.info.outputs.qt_hash }}
+      qt_url: ${{ steps.info.outputs.qt_url }}
+      obs_version: ${{ steps.info.outputs.obs_version }}
+
     steps:
       - name: "Clone"
         uses: actions/checkout@v4
@@ -65,32 +74,32 @@ jobs:
 
           # Prebuilt Dependencies Version
           IFS=$'\n' buildspecdata=($(node tools/buildspec.js "${buildspec}" "prebuilt" "windows-x64"))
-          echo "obs_deps_version=${buildspecdata[0]}" >> "$GITHUB_ENV"
-          echo "obs_deps_hash=${buildspecdata[1]}" >> "$GITHUB_ENV"
-          echo "obs_deps_url=${buildspecdata[2]}" >> "$GITHUB_ENV"
+          echo "obs_deps_version=${buildspecdata[0]}" >> "$GITHUB_OUTPUT"
+          echo "obs_deps_hash=${buildspecdata[1]}" >> "$GITHUB_OUTPUT"
+          echo "obs_deps_url=${buildspecdata[2]}" >> "$GITHUB_OUTPUT"
 
           # Qt Version
           IFS=$'\n' buildspecdata=($(node tools/buildspec.js "${buildspec}" "qt${{ matrix.qt }}" "windows-x64"))
-          echo "qt_version=${buildspecdata[0]}" >> "$GITHUB_ENV"
-          echo "qt_hash=${buildspecdata[1]}" >> "$GITHUB_ENV"
-          echo "qt_url=${buildspecdata[2]}" >> "$GITHUB_ENV"
+          echo "qt_version=${buildspecdata[0]}" >> "$GITHUB_OUTPUT"
+          echo "qt_hash=${buildspecdata[1]}" >> "$GITHUB_OUTPUT"
+          echo "qt_url=${buildspecdata[2]}" >> "$GITHUB_OUTPUT"
 
           # libOBS Version
-          echo "obs_version=$(cd "${{ github.workspace }}/third-party/obs-studio" && git describe --tags --long)" >> "$GITHUB_ENV"
+          echo "obs_version=$(cd "${{ github.workspace }}/third-party/obs-studio" && git describe --tags --long)" >> "$GITHUB_OUTPUT"
 
       - name: "Dependency: Qt (Cache)"
         id: qt-cache
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/qt"
-          key: "qt${{ env.qt_hash }}-${{ env.CACHE_VERSION }}"
+          key: "qt${{ steps.info.outputs.qt_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: Qt"
         id: qt
         if: ${{ steps.qt-cache.outputs.cache-hit != 'true' }}
         shell: bash
         run: |
-          curl --retry 5 --retry-delay 30 -jLo /tmp/qt.zip "${{ env.qt_url }}"
+          curl --retry 5 --retry-delay 30 -jLo /tmp/qt.zip "${{ steps.info.outputs.qt_url }}"
           if [[ ! -f "${{ github.workspace }}/build/qt" ]]; then mkdir -p "${{ github.workspace }}/build/qt"; fi
           7z x -y -o"${{ github.workspace }}/build/qt" -- "/tmp/qt.zip"
 
@@ -99,14 +108,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/obsdeps"
-          key: "obsdeps${{ env.obs_deps_hash }}-${{ env.CACHE_VERSION }}"
+          key: "obsdeps${{ steps.info.outputs.obs_deps_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: Prebuilt OBS Studio Dependencies"
         id: obsdeps
         if: ${{ steps.obsdeps-cache.outputs.cache-hit != 'true' }}
         shell: bash
         run: |
-          curl --retry 5 --retry-delay 30 -jLo /tmp/obsdeps.zip "${{ env.obs_deps_url }}"
+          curl --retry 5 --retry-delay 30 -jLo /tmp/obsdeps.zip "${{ steps.info.outputs.obs_deps_url }}"
           if [[ ! -f "${{ github.workspace }}/build/obsdeps" ]]; then mkdir -p "${{ github.workspace }}/build/obsdeps"; fi
           7z x -y -o"${{ github.workspace }}/build/obsdeps" -- "/tmp/obsdeps.zip"
 
@@ -115,7 +124,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/obs"
-          key: "obs${{ env.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}-obsdeps${{ env.obs_deps_hash }}-qt${{ env.qt_hash }}-${{ env.CACHE_VERSION }}"
+          key: "obs${{ steps.info.outputs.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}-obsdeps${{ steps.info.outputs.obs_deps_hash }}-qt${{ steps.info.outputs.qt_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: OBS Libraries"
         id: obs
@@ -221,32 +230,32 @@ jobs:
 
           # Prebuilt Dependencies Version
           IFS=$'\n' buildspecdata=($(node tools/buildspec.js "${buildspec}" "prebuilt" "macos-universal"))
-          echo "obs_deps_version=${buildspecdata[0]}" >> "$GITHUB_ENV"
-          echo "obs_deps_hash=${buildspecdata[1]}" >> "$GITHUB_ENV"
-          echo "obs_deps_url=${buildspecdata[2]}" >> "$GITHUB_ENV"
+          echo "obs_deps_version=${buildspecdata[0]}" >> "$GITHUB_OUTPUT"
+          echo "obs_deps_hash=${buildspecdata[1]}" >> "$GITHUB_OUTPUT"
+          echo "obs_deps_url=${buildspecdata[2]}" >> "$GITHUB_OUTPUT"
 
           # Qt Version
           IFS=$'\n' buildspecdata=($(node tools/buildspec.js "${buildspec}" "qt${{ matrix.qt }}" "macos-universal"))
-          echo "qt_version=${buildspecdata[0]}" >> "$GITHUB_ENV"
-          echo "qt_hash=${buildspecdata[1]}" >> "$GITHUB_ENV"
-          echo "qt_url=${buildspecdata[2]}" >> "$GITHUB_ENV"
+          echo "qt_version=${buildspecdata[0]}" >> "$GITHUB_OUTPUT"
+          echo "qt_hash=${buildspecdata[1]}" >> "$GITHUB_OUTPUT"
+          echo "qt_url=${buildspecdata[2]}" >> "$GITHUB_OUTPUT"
 
           # libOBS Version
-          echo "obs_version=$(cd "${{ github.workspace }}/third-party/obs-studio" && git describe --tags --long)" >> "$GITHUB_ENV"
+          echo "obs_version=$(cd "${{ github.workspace }}/third-party/obs-studio" && git describe --tags --long)" >> "$GITHUB_OUTPUT"
 
       - name: "Dependency: Qt (Cache)"
         id: qt-cache
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/qt"
-          key: "qt${{ env.qt_hash }}-${{ env.CACHE_VERSION }}"
+          key: "qt${{ steps.info.outputs.qt_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: Qt"
         id: qt
         if: ${{ steps.qt-cache.outputs.cache-hit != 'true' }}
         shell: bash
         run: |
-          curl --retry 5 --retry-delay 30 -jLo /tmp/qt.tar.xz "${{ env.qt_url }}"
+          curl --retry 5 --retry-delay 30 -jLo /tmp/qt.tar.xz "${{ steps.info.outputs.qt_url }}"
           if [[ ! -f "${{ github.workspace }}/build/qt" ]]; then mkdir -p "${{ github.workspace }}/build/qt"; fi
           tar -xvf "/tmp/qt.tar.xz" -C "${{ github.workspace }}/build/qt"
 
@@ -255,14 +264,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/obsdeps"
-          key: "obsdeps${{ env.obs_deps_hash }}-${{ env.CACHE_VERSION }}"
+          key: "obsdeps${{ steps.info.outputs.obs_deps_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: Prebuilt OBS Studio Dependencies"
         id: obsdeps
         if: ${{ steps.obsdeps-cache.outputs.cache-hit != 'true' }}
         shell: bash
         run: |
-          curl --retry 5 --retry-delay 30 -jLo /tmp/obsdeps.tar.xz "${{ env.obs_deps_url }}"
+          curl --retry 5 --retry-delay 30 -jLo /tmp/obsdeps.tar.xz "${{ steps.info.outputs.obs_deps_url }}"
           if [[ ! -f "${{ github.workspace }}/build/obsdeps" ]]; then mkdir -p "${{ github.workspace }}/build/obsdeps"; fi
           tar -xvf "/tmp/obsdeps.tar.xz" -C "${{ github.workspace }}/build/obsdeps"
 
@@ -271,7 +280,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/obs"
-          key: "obs${{ env.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}--obsdeps${{ env.obs_deps_hash }}-qt${{ env.qt_hash }}-${{ env.CACHE_VERSION }}"
+          key: "obs${{ steps.info.outputs.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}--obsdeps${{ steps.info.outputs.obs_deps_hash }}-qt${{ steps.info.outputs.qt_hash }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: OBS Libraries"
         id: obs
@@ -371,9 +380,9 @@ jobs:
             sudo apt-get install binutils gcc-${compiler[1]} g++-${compiler[1]}
             sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${compiler[1]} 800 --slave /usr/bin/g++ g++ /usr/bin/g++-${compiler[1]}
 
-            echo "CMAKE_C_COMPILER=gcc-${compiler[1]}" >> "$GITHUB_ENV"
-            echo "CMAKE_CXX_COMPILER=g++-${compiler[1]}" >> "$GITHUB_ENV"
-            echo "CMAKE_LINKER=gold" >> "$GITHUB_ENV"
+            echo "CMAKE_C_COMPILER=gcc-${compiler[1]}" >> "$GITHUB_OUTPUT"
+            echo "CMAKE_CXX_COMPILER=g++-${compiler[1]}" >> "$GITHUB_OUTPUT"
+            echo "CMAKE_LINKER=gold" >> "$GITHUB_OUTPUT"
           elif [[ "${compiler[0]}" == "Clang" ]]; then
             curl -jLo /tmp/llvm.sh "https://apt.llvm.org/llvm.sh"
             chmod +x /tmp/llvm.sh
@@ -386,9 +395,9 @@ jobs:
             sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-${compiler[1]} 800
             sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${compiler[1]} 800
 
-            echo "CMAKE_C_COMPILER=clang-${compiler[1]}" >> "$GITHUB_ENV"
-            echo "CMAKE_CXX_COMPILER=clang++-${compiler[1]}" >> "$GITHUB_ENV"
-            echo "CMAKE_LINKER=ld.lld-${compiler[1]}" >> "$GITHUB_ENV"
+            echo "CMAKE_C_COMPILER=clang-${compiler[1]}" >> "$GITHUB_OUTPUT"
+            echo "CMAKE_CXX_COMPILER=clang++-${compiler[1]}" >> "$GITHUB_OUTPUT"
+            echo "CMAKE_LINKER=ld.lld-${compiler[1]}" >> "$GITHUB_OUTPUT"
           else
             echo "Unknown Compiler"
             exit 1
@@ -414,7 +423,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/build/obs"
-          key: "obs${{ env.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}--${{ matrix.runner }}-${{ matrix.compiler }}-${{ env.CACHE_VERSION }}"
+          key: "obs${{ steps.info.outputs.obs_version }}-${{ matrix.runner }}_${{ matrix.compiler }}--${{ matrix.runner }}-${{ matrix.compiler }}-${{ env.CACHE_VERSION }}"
 
       - name: "Dependency: OBS Libraries"
         id: obs
