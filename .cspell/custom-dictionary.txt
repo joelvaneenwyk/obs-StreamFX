@@ -2,9 +2,14 @@
 clangd
 DCMAKE
 DCURL
+deinit
+DENABLE
 Dlibobs
 elif
+endgroup
 Fmpeg
+gitmodules
+INTERPROCEDURAL
 jackd
 libasound
 libavcodec
@@ -40,6 +45,7 @@ obsdeps
 popd
 pushd
 randr
+TOOLSET
 Xaymar
 xfixes
 xinerama
