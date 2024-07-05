@@ -32,22 +32,44 @@ output:
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - task: build
 
-  info:
+  build:
     vars:
       BUILDSPEC_EXE: '{{ joinPath .ROOT_DIR "tools" "buildspec.js" }}'
       BUILDSPEC: '{{ joinPath .ROOT_DIR "third-party" "obs-studio" "buildspec.json" }}'
 
       OBS_DEPS:
-        sh: node "{{ fromSlash .BUILDSPEC_EXE }}" "{{ fromSlash .BUILDSPEC }}" "prebuilt" "windows-x64"
+        sh: >-
+          if _output="$( \
+            node \
+              "{{ fromSlash .BUILDSPEC_EXE }}" \
+              "{{ fromSlash .BUILDSPEC }}" \
+              "prebuilt" "windows-x64" )"; then
+            echo "$_output"
+          else
+            echo "XX"
+            echo "YY"
+            echo "ZZ"
+          fi
       OBS_DATE: '{{ index (splitLines .OBS_DEPS) 0 }}'
       OBS_BUILD_HASH: '{{ index (splitLines .OBS_DEPS) 1 }}'
       OBS_DEPS_URL: '{{ index (splitLines .OBS_DEPS) 2 }}'
 
       QT_DEPS:
-        sh: node "{{ fromSlash .BUILDSPEC_EXE }}" "{{ fromSlash .BUILDSPEC }}" "qt{{ .QT | default "6" }}" "windows-x64"
+        sh: >-
+          if _output="$( \
+            node \
+              "{{ fromSlash .BUILDSPEC_EXE }}" \
+              "{{ fromSlash .BUILDSPEC }}" \
+              "qt{{ .QT | default "6" }}" \
+              "windows-x64" )"; then
+            echo "$_output"
+          else
+            echo "XX"
+            echo "YY"
+            echo "ZZ"
+          fi
       QT_DATE: '{{ index (splitLines .QT_DEPS) 0 }}'
       QT_BUILD_HASH: '{{ index (splitLines .QT_DEPS) 1 }}'
       QT_URL: '{{ index (splitLines .QT_DEPS) 2 }}'

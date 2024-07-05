@@ -55,9 +55,11 @@ lldb
 Makefiles
 MSVC
 obsdeps
+pipefail
 popd
 pushd
 randr
+shopt
 TOOLSET
 Xaymar
 xfixes
