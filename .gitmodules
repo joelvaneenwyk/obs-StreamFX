@@ -4,10 +4,12 @@
 
 [submodule "cmake/clang"]
 	path = cmake/clang
-	url = https://github.com/Xaymar/cmake-clang.git
+	url = https://github.com/joelvaneenwyk/cmake-clang.git
+	branch = master
 [submodule "cmake/version"]
 	path = cmake/version
-	url = https://github.com/Xaymar/cmake-version.git
+	url = https://github.com/joelvaneenwyk/cmake-version.git
+	branch = master
 
 [submodule "third-party/obs-studio"]
 	path = third-party/obs-studio
