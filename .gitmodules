@@ -27,13 +27,13 @@
 
 [submodule "third-party/nvidia-maxine-ar-sdk"]
 	path = third-party/nvidia-maxine-ar-sdk
-	url = https://github.com/NVIDIA/MAXINE-AR-SDK.git
+	url = https://github.com/joelvaneenwyk/nvidia-maxine-ar-sdk.git
 	branch = master
 [submodule "third-party/nvidia-maxine-vfx-sdk"]
 	path = third-party/nvidia-maxine-vfx-sdk
-	url = https://github.com/NVIDIA/MAXINE-VFX-SDK.git
+	url = https://github.com/joelvaneenwyk/nvidia-maxine-vfx-sdk.git
 	branch = master
 [submodule "third-party/nvidia-maxine-afx-sdk"]
 	path = third-party/nvidia-maxine-afx-sdk
-	url = https://github.com/NVIDIA/MAXINE-AFX-SDK.git
+	url = https://github.com/joelvaneenwyk/nvidia-maxine-afx-sdk.git
 	branch = master
