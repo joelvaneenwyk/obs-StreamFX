@@ -16,16 +16,21 @@
 [submodule "third-party/nlohmann-json"]
 	path = third-party/nlohmann-json
 	url = https://github.com/nlohmann/json.git
+	branch = master
 [submodule "third-party/msvc-redist-helper"]
 	path = third-party/msvc-redist-helper
-	url = https://github.com/Xaymar/msvc-redist-helper.git
+	url = https://github.com/joelvaneenwyk/msvc-redist-helper.git
+	branch = master
 
 [submodule "third-party/nvidia-maxine-ar-sdk"]
 	path = third-party/nvidia-maxine-ar-sdk
 	url = https://github.com/NVIDIA/MAXINE-AR-SDK.git
+	branch = master
 [submodule "third-party/nvidia-maxine-vfx-sdk"]
 	path = third-party/nvidia-maxine-vfx-sdk
 	url = https://github.com/NVIDIA/MAXINE-VFX-SDK.git
+	branch = master
 [submodule "third-party/nvidia-maxine-afx-sdk"]
 	path = third-party/nvidia-maxine-afx-sdk
 	url = https://github.com/NVIDIA/MAXINE-AFX-SDK.git
+	branch = master

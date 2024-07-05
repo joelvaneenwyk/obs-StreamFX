@@ -87,6 +87,7 @@ tasks:
           echo "qt_url={{.QT_URL}}"
           echo "obs_version={{.OBS_VERSION}}"
     cmds:
+      - cmd: git submodule update --init --recursive --checkout
       - cmd: |
           if [ -n "${GITHUB_ENV:-}" ]; then
             echo "{{.PRINT}}" >> "$GITHUB_ENV"
